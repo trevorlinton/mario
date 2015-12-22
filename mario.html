@@ -69,6 +69,7 @@
   .mario.fire.jumping.right {
     background-position:-595px -568px;
   }
+<<<<<<< HEAD
   .mario.frog {
       height: 63px;
   }
@@ -99,6 +100,34 @@
   .mario.frog.jumping.right {
     background-position:-586px -1074px;
   }
+  .mario.raccoon {
+    width: 48px;
+    height: 57px;
+  }
+  .mario.raccoon.standing.left, .mario.raccoon.crouching.left {
+    background-position: -146px -362px;
+  }
+  .mario.raccoon.standing.right, .mario.raccoon.crouching.right {
+    background-position: -460px -355px;
+  }
+  .mario.raccoon.walking.right {
+    background-position: -520px -355px;
+  }
+  .mario.raccoon.walking.left {
+    background-position: -86px -362px;
+  }
+  .mario.raccoon.running.left {
+    background-position: -24px -362px;
+  }
+  .mario.raccoon.running.right {
+    background-position: -582px -355px;
+  }
+  .mario.raccoon.jumping.left {
+    background-position: -202px -362px;
+  }
+  .mario.raccoon.jumping.right {
+    background-position: -402px -354px;
+  }
 </style>
 <script type="text/javascript">
   function Mario(domElement) {
@@ -118,13 +147,17 @@
         return appearance;
       },
       set:function(e) {
-        console.assert(e === 'normal' || e === 'fire' || e === 'frog', 'Mario can only be normal, fire, or frog.');
+        console.assert(e === 'normal' || e === 'fire' || e === 'frog'  || e === 'raccoon', 'Mario can only be normal, fire, raccoon or frog.');
         appearance = e;
-        domElement.classList.remove('fire', 'frog');
+        domElement.classList.remove('fire', 'frog', 'raccoon');
         switch(e) {
           case 'fire':
           case 'frog':
-          domElement.classList.add(e)
+          case 'raccoon':
+            domElement.classList.add(e);
+            break;
+          default:
+            break;
         }
       }
     });
