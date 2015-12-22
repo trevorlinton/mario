@@ -11,7 +11,6 @@
     transition-timing-function: linear, ease-in;
     position:relative;
     display:inline-block;
-    top:400px;
   }
   .mario.standing.right {
     background-position:-13px -82px;
@@ -96,8 +95,7 @@
           domElement.classList.add('fire');
         }
       }
-    })
-
+    });
 
     Object.defineProperty(this, 'crouching', {
       get:function() {
@@ -170,7 +168,6 @@
           walk();
           walkingInterval = setInterval(walk, 70);
         } else {
-          walking = false;
           clearInterval(walkingInterval);
           domElement.classList.remove('standing');
           domElement.classList.remove('walking');
@@ -202,8 +199,7 @@
     this.direction = direction;
     this.crouching = crouching;
 
-    // attach mario event listeners
-    // so he 'behaves'
+    // attach mario event listeners so he 'behaves'
     var downArrow = 40, leftArrow = 37, rightArrow = 39, upArrow = 38;
     window.addEventListener('keydown', function(event) {
       if(event.keyCode === leftArrow && !jumping  && (this.direction !== 'left' || this.walking === false) ) {
