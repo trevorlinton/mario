@@ -120,8 +120,7 @@
       set:function(e) {
         console.assert(e === 'normal' || e === 'fire' || e === 'frog', 'Mario can only be normal, fire, or frog.');
         appearance = e;
-        domElement.classList.remove('fire');
-        domElement.classList.remove('frog');
+        domElement.classList.remove('fire', 'frog');
         switch(e) {
           case 'fire':
           case 'frog':
