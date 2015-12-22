@@ -154,7 +154,7 @@
       }
     }.bind(this);
 
-    
+
     Object.defineProperty(this, 'walking', {
       get:function() {
         return walking;
@@ -199,30 +199,35 @@
     this.direction = direction;
     this.crouching = crouching;
 
+    // check key directions
+    this.getDirection = function(event) {
+      switch(event.keyCode) {
+        case 37: case 65: return 'left';
+        case 39: case 68: return 'right';
+        case 40: case 83: return 'down';
+        case 38: case 87: case 32: return 'up';
+      }
+    }
+
     // attach mario event listeners so he 'behaves'
-    var downArrow = 40, leftArrow = 37, rightArrow = 39, upArrow = 38;
     window.addEventListener('keydown', function(event) {
-      if(event.keyCode === leftArrow && !jumping  && (this.direction !== 'left' || this.walking === false) ) {
-        this.direction = 'left';
+      var direction = this.getDirection(event);
+      if(direction === 'left' || direction === 'right' && (this.direction !== direction || this.walking === false) ) {
+        this.direction = direction;
         this.walking = true;
         this.crouching = false;
-      } else if (event.keyCode === rightArrow && !jumping && (this.direction !== 'right' || this.walking === false) ) {
-        this.direction = 'right';
-        this.walking = true;
-        this.crouching = false;
-      } else if (event.keyCode === downArrow) {
+      } else if (direction === 'down') {
         this.walking = false;
         this.crouching = true;
-      } else if (event.keyCode === upArrow && !jumping) {
+      } else if (direction === 'up' && !jumping) {
         this.jump();
       }
     }.bind(this));
     window.addEventListener('keyup', function(event) {
-      if (event.keyCode === downArrow) {
+      var direction = this.getDirection(event);
+      if (direction === 'down' ) {
         this.crouching = false;
-      } else if(event.keyCode === leftArrow && this.direction === 'left') {
-        this.walking = false;
-      } else if (event.keyCode === rightArrow && this.direction === 'right') {
+      } else if(direction === 'left' || direction === 'right' && this.direction === direction) {
         this.walking = false;
       }
     }.bind(this));
