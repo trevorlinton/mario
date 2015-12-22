@@ -69,6 +69,36 @@
   .mario.fire.jumping.right {
     background-position:-595px -568px;
   }
+  .mario.frog {
+      height: 63px;
+  }
+  .mario.frog.jumping {
+      width: 40px;
+  }
+  .mario.frog.standing.left, .mario.crouching.fire.left {
+    background-position:-274px -1072px;
+  }
+  .mario.frog.standing.right, .mario.crouching.fire.right {
+    background-position:-352px -1070px;
+  }
+  .mario.frog.walking.right {
+    background-position:-412px -1070px;
+  }
+  .mario.frog.walking.left {
+    background-position:-214px -1072px;
+  }
+  .mario.frog.running.left {
+    background-position:-154px -1074px;
+  }
+  .mario.frog.running.right {
+    background-position:-470px -1072px;
+  }
+  .mario.frog.jumping.left {
+    background-position:-32px -1084px;
+  }
+  .mario.frog.jumping.right {
+    background-position:-586px -1074px;
+  }
 </style>
 <script type="text/javascript">
   function Mario(domElement) {
@@ -88,11 +118,14 @@
         return appearance;
       },
       set:function(e) {
-        console.assert(e === 'normal' || e === 'fire', 'Mario can only be normal or fire.');
+        console.assert(e === 'normal' || e === 'fire' || e === 'frog', 'Mario can only be normal, fire, or frog.');
         appearance = e;
         domElement.classList.remove('fire');
-        if(e === 'fire') {
-          domElement.classList.add('fire');
+        domElement.classList.remove('frog');
+        switch(e) {
+          case 'fire':
+          case 'frog':
+          domElement.classList.add(e)
         }
       }
     });
@@ -116,7 +149,7 @@
       },
       set:function(e) {
         console.assert(e === 'left' || e === 'right', 'Invalid direct, can be left or right.');
-        if(e === direction) 
+        if(e === direction)
           return;
         direction = e;
         domElement.classList.remove('left');
@@ -154,7 +187,7 @@
       }
     }.bind(this);
 
-    
+
     Object.defineProperty(this, 'walking', {
       get:function() {
         return walking;
