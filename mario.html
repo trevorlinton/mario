@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  .mario {
+    background:url(mariosheet.gif);
+    width:35px;
+    height:54px;
+    transition-property: left, top;
+    transition-duration: 0.07s, 0.4s;
+    transition-timing-function: linear, ease-in;
+    position:relative;
+    display:inline-block;
+    top:400px;
+  }
+  .mario.standing.right {
+    background-position:-13px -82px;
+  }
+  .mario.walking.right {
+    background-position:-93px -82px;
+  }
+  .mario.running.right {
+    background-position:-173px -84px;
+  }
+  .mario.jumping {
+    transition-timing-function: linear, ease-out;
+  }
+  .mario.jumping.right {
+    background-position:-253px -82px;
+  }
+  .mario.crouching.right {
+    background-position:-333px -74px;
+  }
+  .mario.standing.left {
+    background-position:-335px -150px;
+  }
+  .mario.walking.left {
+    background-position:-255px -150px;
+  }
+  .mario.running.left {
+    background-position:-175px -152px;
+  }
+  .mario.jumping.left {
+    background-position:-95px -150px;
+  }
+  .mario.crouching.left {
+    background-position:-13px -142px;
+  }
+  .mario.fire.standing.left, .mario.crouching.fire.left {
+    background-position:-275px -568px;
+  }
+  .mario.fire.standing.right, .mario.crouching.fire.right {
+    background-position:-355px -568px;
+  }
+  .mario.fire.walking.right {
+    background-position:-435px -568px;
+  }
+  .mario.fire.walking.left {
+    background-position:-195px -568px;
+  }
+  .mario.fire.running.left {
+    background-position:-115px -570px;
+  }
+  .mario.fire.running.right {
+    background-position:-515px -570px;
+  }
+  .mario.fire.jumping.left {
+    background-position:-35px -568px;
+  }
+  .mario.fire.jumping.right {
+    background-position:-595px -568px;
+  }
+</style>
+<script type="text/javascript">
+  function Mario(domElement) {
+    var jumpingHeight = 250;
+
+    // not configuration, this is
+    // state, do not modify.
+    var crouching = false;
+    var direction = 'left';
+    var walkingState = 0;
+    var walking = false;
+    var walkingInterval;
+    var jumping = false;
+
+    Object.defineProperty(this, 'appearance', {
+      get:function() {
+        return appearance;
+      },
+      set:function(e) {
+        console.assert(e === 'normal' || e === 'fire', 'Mario can only be normal or fire.');
+        appearance = e;
+        domElement.classList.remove('fire');
+        if(e === 'fire') {
+          domElement.classList.add('fire');
+        }
+      }
+    })
+
+
+    Object.defineProperty(this, 'crouching', {
+      get:function() {
+        return crouching;
+      },
+      set:function(e) {
+        crouching = e ? true : false;
+        if(crouching)
+          domElement.classList.add('crouching');
+        else
+          domElement.classList.remove('crouching');
+      }
+    });
+
+    Object.defineProperty(this, 'direction', {
+      get:function() {
+        return direction;
+      },
+      set:function(e) {
+        console.assert(e === 'left' || e === 'right', 'Invalid direct, can be left or right.');
+        if(e === direction) 
+          return;
+        direction = e;
+        domElement.classList.remove('left');
+        domElement.classList.remove('right');
+        domElement.classList.add(direction);
+      }
+    });
+
+    var walk = function() {
+      if(!walking) {
+        return;
+      }
+      if(walkingState === 0) {
+        domElement.classList.remove('standing');
+        domElement.classList.add('walking');
+        walkingState = 1;
+      } else if(walkingState === 1) {
+        domElement.classList.remove('walking');
+        domElement.classList.add('running');
+        walkingState = 2;
+      } else if(walkingState === 2) {
+        domElement.classList.remove('running');
+        domElement.classList.add('walking');
+        walkingState = 3;
+      } else {
+        domElement.classList.remove('walking');
+        domElement.classList.add('standing');
+        walkingState = 0;
+      }
+      var pos = parseInt(domElement.style.left) || 0;
+      if(this.direction === 'right') {
+        domElement.style.left = (pos + 13) + 'px';
+      } else {
+        domElement.style.left = (pos - 13) + 'px';
+      }
+    }.bind(this);
+
+    
+    Object.defineProperty(this, 'walking', {
+      get:function() {
+        return walking;
+      },
+      set:function(e) {
+        if(e === walking) {
+          return;
+        }
+        walking = e ? true : false;
+        if(walking) {
+          walk();
+          walkingInterval = setInterval(walk, 70);
+        } else {
+          walking = false;
+          clearInterval(walkingInterval);
+          domElement.classList.remove('standing');
+          domElement.classList.remove('walking');
+          domElement.classList.remove('running');
+          domElement.classList.add('standing');
+        }
+      }
+    });
+
+    this.jump = function() {
+      if(jumping) {
+        return;
+      }
+      jumping = true;
+      var top = parseInt(domElement.style.top) || 0;
+      domElement.style.top = (top - jumpingHeight) + 'px';
+      domElement.classList.add('jumping');
+      setTimeout(function() {
+        domElement.style.top = top + 'px';
+        domElement.classList.remove('jumping');
+        setTimeout(function() {
+          jumping = false;
+        }, 400);
+      },350);
+    };
+
+    // initial state.
+    this.walking = walking;
+    this.direction = direction;
+    this.crouching = crouching;
+
+    // attach mario event listeners
+    // so he 'behaves'
+    var downArrow = 40, leftArrow = 37, rightArrow = 39, upArrow = 38;
+    window.addEventListener('keydown', function(event) {
+      if(event.keyCode === leftArrow && !jumping  && (this.direction !== 'left' || this.walking === false) ) {
+        this.direction = 'left';
+        this.walking = true;
+        this.crouching = false;
+      } else if (event.keyCode === rightArrow && !jumping && (this.direction !== 'right' || this.walking === false) ) {
+        this.direction = 'right';
+        this.walking = true;
+        this.crouching = false;
+      } else if (event.keyCode === downArrow) {
+        this.walking = false;
+        this.crouching = true;
+      } else if (event.keyCode === upArrow && !jumping) {
+        this.jump();
+      }
+    }.bind(this));
+    window.addEventListener('keyup', function(event) {
+      if (event.keyCode === downArrow) {
+        this.crouching = false;
+      } else if(event.keyCode === leftArrow && this.direction === 'left') {
+        this.walking = false;
+      } else if (event.keyCode === rightArrow && this.direction === 'right') {
+        this.walking = false;
+      }
+    }.bind(this));
+  }
+
+  window.addEventListener('load', function() {
+    window.mario = new Mario(document.getElementById('mario'));
+    document.getElementById('mario').style.top = '400px';
+  });
+</script>
+</head>
+<body>
+  <div id="mario" class="mario standing fire left"></div>
+</body>
+</html>
